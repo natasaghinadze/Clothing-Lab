@@ -1,0 +1,82 @@
+<div class="auth-container">
+  <div class="left">
+    <div class="login-box">
+      <h1>კეთილი იყოს თქვენი მობრძანება👋</h1>
+
+      <p class="subtitle">
+        შედი ანგარიშში და განაგრძე შოპინგი.
+      </p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
+
+        <div class="form-group">
+          <label for="email">ელფოსტა</label>
+
+          <input id="email" type="email" placeholder="example@email.com" formControlName="email" autocomplete="off" />
+
+          @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) {
+          <small class="error">
+            ელფოსტა სავალდებულოა
+          </small>
+          }
+
+          @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) {
+          <small class="error">
+            მიუთითე სწორი ელფოსტა
+          </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">პაროლი</label>
+
+          <input id="password" type="password" placeholder="მინიმუმ 8 სიმბოლო" formControlName="password" autocomplete="new-password" />
+          
+          @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
+          <small class="error">
+            პაროლი სავალდებულოა
+          </small>
+          }
+
+          @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')) {
+          <small class="error">
+            პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო
+          </small>
+          }
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">დაგავიწყდა პაროლი?</a>
+        </div>
+
+        <button class="sign-in-btn" type="submit">
+          შესვლა
+        </button>
+
+        <div class="divider">
+          <span></span>
+          <p>ან</p>
+          <span></span>
+        </div>
+
+        <button type="button" class="social-btn">
+          შესვლა Google-ით
+        </button>
+
+        <button type="button" class="social-btn">
+          შესვლა Facebook-ით
+        </button>
+
+        <p class="signup-text">
+          არ გაქვს ანგარიში?
+          <a href="#">დარეგისტრირდი</a>
+        </p>
+
+        <p *ngIf="message">{{ message }}</p>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="rightImg"></div>
+</div>
