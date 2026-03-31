@@ -5,7 +5,7 @@ import { Login2 } from './features/auth/pages/login/login';
 
 @Component({
   selector: 'app-root',
-  imports: [Login2],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

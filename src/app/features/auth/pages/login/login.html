@@ -30,8 +30,9 @@
         <div class="form-group">
           <label for="password">პაროლი</label>
 
-          <input id="password" type="password" placeholder="მინიმუმ 8 სიმბოლო" formControlName="password" autocomplete="new-password" />
-          
+          <input id="password" type="password" placeholder="მინიმუმ 8 სიმბოლო" formControlName="password"
+            autocomplete="new-password" />
+
           @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
           <small class="error">
             პაროლი სავალდებულოა
@@ -46,7 +47,7 @@
         </div>
 
         <div class="forgot-password">
-          <a href="#">დაგავიწყდა პაროლი?</a>
+          <a [routerLink]="['/forgot-password']">დაგავიწყდა პაროლი?</a>
         </div>
 
         <button class="sign-in-btn" type="submit">
