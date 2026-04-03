@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login2',
@@ -14,8 +14,10 @@ import { RouterLink } from '@angular/router';
 export class Login2 {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   message = '';
+  loading = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -23,15 +25,20 @@ export class Login2 {
   });
 
   async login() {
+    this.loading = true;
 
-  if(this.loginForm.invalid){
-    return;
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    const { email, password } = this.loginForm.value;
+
+    try {
+      await this.authService.login(email!, password!);
+      this.router.navigate(['/admin']);
+    } catch { 
+    } finally {
+      this.loading = false;
+    }
   }
-
-  const {email, password} = this.loginForm.value;
-
-  try {
-    await this.authService.login(email!, password!);
-  } catch {}
-}
 }

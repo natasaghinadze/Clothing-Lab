@@ -37,6 +37,10 @@ export class AuthService {
         return signOut(this.firebaseAuth)
     }
 
+    isLoggedIn(): boolean {
+        return !!this.firebaseAuth.currentUser;
+    }
+
     watchAuthState(callback: (user: User | null) => void) {
         return onAuthStateChanged(this.firebaseAuth, callback)
     }

@@ -1,0 +1,19 @@
+<div class="admin-layout">
+  <div class="sidebar-area">
+    <app-admin-sidebar></app-admin-sidebar>
+  </div>
+
+  <div class="main-area">
+    <app-admin-header
+      [title]="'Dashboard'"
+      [subtitle]="'მართე შენი მაღაზია მარტივად და ეფექტურად'"
+    ></app-admin-header>
+
+    <main class="page-content">
+      <div class="content-placeholder">
+        აქ განთავსდება dashboard content
+      </div>
+    </main>
+  </div>
+</div>
+<router-outlet></router-outlet>
