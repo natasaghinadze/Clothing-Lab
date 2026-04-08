@@ -1,29 +1,49 @@
 import { Routes } from '@angular/router';
-import { Login2 } from './features/auth/pages/login/login';
-import { ForgotPassword } from './features/auth/pages/forgot-password/forgot-password';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
-// export const routes: Routes = [
-//   { path: '', redirectTo: 'login', pathMatch: 'full' },
-//   { path: 'login', component: Login2 },
-//   { path: 'forgot-password', component: ForgotPassword },
-//   { path: '**', redirectTo: 'login' }
-// ];
-
-export const routes: Routes =[
+export const routes: Routes = [
   {
-    path: 'login',
-    canActivate:[],
-    loadComponent: () => 
-      import('./features/auth/pages/login/login').then(m => m.Login2)
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
   },
   {
-    path:'admin',
-    canActivate:[],
+    path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () =>
-      import('./features/admin/admin').then(m => m.Admin)
+      import('./features/auth/pages/login/login').then((m) => m.Login2),
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/forgot-password/forgot-password').then(
+        (m) => m.ForgotPassword
+      ),
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/admin/admin').then((m) => m.Admin),
+    children: [
+      {
+        path: '',
+        redirectTo: 'products',
+        pathMatch: 'full',
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/admin/pages/products/products').then(
+            (m) => m.Products
+          ),
+      },
+    ],
   },
   {
     path: '**',
     redirectTo: 'login',
   },
-]
+];
