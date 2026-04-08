@@ -8,41 +8,40 @@
       </p>
 
       <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
-
         <div class="form-group">
           <label for="email">ელფოსტა</label>
 
           <input id="email" type="email" placeholder="example@email.com" formControlName="email" autocomplete="off" />
 
           @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) {
-          <small class="error">
-            ელფოსტა სავალდებულოა
-          </small>
+            <small class="error">
+              ელფოსტა სავალდებულოა
+            </small>
           }
 
           @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) {
-          <small class="error">
-            მიუთითე სწორი ელფოსტა
-          </small>
+            <small class="error">
+              მიუთითე სწორი ელფოსტა
+            </small>
           }
         </div>
 
         <div class="form-group">
           <label for="password">პაროლი</label>
 
-          <input id="password" type="password" placeholder="მინიმუმ 8 სიმბოლო" formControlName="password"
-            autocomplete="new-password" />
+          <input id="password" type="password" placeholder="მინიმუმ 8 სიმბოლო" formControlName="password"  autocomplete="new-password"
+          />
 
           @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
-          <small class="error">
-            პაროლი სავალდებულოა
-          </small>
+            <small class="error">
+              პაროლი სავალდებულოა
+            </small>
           }
 
           @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')) {
-          <small class="error">
-            პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო
-          </small>
+            <small class="error">
+              პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო
+            </small>
           }
         </div>
 
@@ -50,8 +49,12 @@
           <a [routerLink]="['/forgot-password']">დაგავიწყდა პაროლი?</a>
         </div>
 
-        <button class="sign-in-btn" type="submit">
-          შესვლა
+        <button
+          class="sign-in-btn"
+          type="submit"
+          [disabled]="loading || loginForm.invalid"
+        >
+          {{ loading ? 'იტვირთება...' : 'შესვლა' }}
         </button>
 
         <div class="divider">
@@ -70,11 +73,12 @@
 
         <p class="signup-text">
           არ გაქვს ანგარიში?
-          <a href="#">დარეგისტრირდი</a>
+          <a [routerLink]="['/register']">დარეგისტრირდი</a>
         </p>
 
-        <p *ngIf="message">{{ message }}</p>
-
+        @if (message) {
+          <p class="form-message">{{ message }}</p>
+        }
       </form>
     </div>
   </div>

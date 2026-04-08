@@ -6,10 +6,10 @@ import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login2',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
-  standalone: true
 })
 export class Login2 {
   private authService = inject(AuthService);
@@ -24,19 +24,24 @@ export class Login2 {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  async login() {
-    this.loading = true;
-
+  async login(): Promise<void> {
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    const { email, password } = this.loginForm.value;
+    this.loading = true;
+    this.message = '';
+
+    const email = this.loginForm.controls.email.value ?? '';
+    const password = this.loginForm.controls.password.value ?? '';
 
     try {
-      await this.authService.login(email!, password!);
-      this.router.navigate(['/admin']);
-    } catch { 
+      await this.authService.login(email, password);
+      await this.router.navigate(['/admin/products']);
+    } catch (error) {
+      this.message = 'ავტორიზაცია ვერ შესრულდა';
+      console.error(error);
     } finally {
       this.loading = false;
     }

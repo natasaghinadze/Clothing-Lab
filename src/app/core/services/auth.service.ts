@@ -1,52 +1,58 @@
-import { inject, Injectable } from "@angular/core";
-import { auth } from "../../app.config";
-import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, User } from "firebase/auth";
-import { notificationService } from "./notification.service";
+import { inject, Injectable } from '@angular/core';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+} from '@angular/fire/auth';
+import { notificationService } from './notification.service';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AuthService {
+  private firebaseAuth = inject(Auth);
+  private notify = inject(notificationService);
 
-    private firebaseAuth: Auth = auth
-    private notify = inject(notificationService)
+  register(email: string, password: string) {
+    return createUserWithEmailAndPassword(this.firebaseAuth, email, password);
+  }
 
-    register(email: string, password: string) {
-        return createUserWithEmailAndPassword(this.firebaseAuth, email, password);
+  async login(email: string, password: string) {
+    try {
+      await signInWithEmailAndPassword(this.firebaseAuth, email, password);
+      this.notify.success('წარმატებით შეხვედი სისტემაში');
+    } catch (error: any) {
+      const code = error.code;
+
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+        this.notify.errorMessage('ელფოსტა ან პაროლი არასწორია');
+      } else if (code === 'auth/too-many-requests') {
+        this.notify.errorMessage('ძალიან ბევრჯერ შეცდომით სცადეთ. მოგვიანებით სცადეთ');
+      } else {
+        this.notify.errorMessage('შეცდომა ავტორიზაციის დროს');
+      }
+
+      throw error;
     }
+  }
 
-    async login(email: string, password: string) {
-        try {
-            await signInWithEmailAndPassword(this.firebaseAuth, email, password);
-            this.notify.success("წარმატებით შეხვედი სისტემაში");
-        } catch (error: any) {
-            const code = error.code;
-            if (code === 'auth/user-not-found' || code === 'auth/wrong-password') {
-                this.notify.errorMessage("ელფოსტა ან პაროლი არასწორია");
-            } else if (code === 'auth/too-many-requests') {
-                this.notify.errorMessage("ძალიან ბევრჯერ შეცდომით სცადეთ. მოგვიანებით სცადეთ");
-            } else {
-                this.notify.errorMessage("შეცდომა ავტორიზაციის დროს");
-            }
-            throw error;
-        }
-    }
+  logout() {
+    return signOut(this.firebaseAuth);
+  }
 
-    logout() {
-        return signOut(this.firebaseAuth)
-    }
+  isLoggedIn(): boolean {
+    return !!this.firebaseAuth.currentUser;
+  }
 
-    isLoggedIn(): boolean {
-        return !!this.firebaseAuth.currentUser;
-    }
+  watchAuthState(callback: (user: User | null) => void) {
+    return onAuthStateChanged(this.firebaseAuth, callback);
+  }
 
-    watchAuthState(callback: (user: User | null) => void) {
-        return onAuthStateChanged(this.firebaseAuth, callback)
-    }
-
-    forgotPassword(email: string) {
-        return sendPasswordResetEmail(this.firebaseAuth, email);
-    }
-
+  forgotPassword(email: string) {
+    return sendPasswordResetEmail(this.firebaseAuth, email);
+  }
 }
