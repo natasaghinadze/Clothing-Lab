@@ -1,0 +1,103 @@
+<section class="products-page">
+  <div class="page-top">
+    <div>
+      <h2>პროდუქტები</h2>
+      <p>აქ გამოჩნდება პროდუქციის მართვა</p>
+    </div>
+
+    <button type="button" class="primary-btn" (click)="openAddProductModal()">
+      + პროდუქტის დამატება
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span>სულ პროდუქტები</span>
+      <strong>{{ totalProducts() }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>აქტიური</span>
+      <strong>{{ activeProducts() }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>გამორჩეული</span>
+      <strong>{{ featuredProducts() }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>მარაგის გარეშე</span>
+      <strong>{{ outOfStockProducts() }}</strong>
+    </div>
+  </div>
+
+  <div class="content-card">
+    @if (loading()) {
+      <div class="state-box">იტვირთება...</div>
+    } @else if (errorMessage()) {
+      <div class="state-box error">{{ errorMessage() }}</div>
+    } @else if (products().length === 0) {
+      <div class="state-box">პროდუქტები ჯერ არ არის დამატებული</div>
+    } @else {
+      <div class="products-table">
+        <div class="table-head">
+          <span>პროდუქტი</span>
+          <span>კატეგორია</span>
+          <span>ფასი</span>
+          <span>მარაგი</span>
+          <span>სტატუსი</span>
+          <span>ქმედებები</span>
+        </div>
+
+        @for (product of products(); track product.id) {
+          <div class="table-row">
+            <div class="product-cell">
+              <div class="thumb">
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                />
+              </div>
+
+              <div>
+                <strong>{{ product.name }}</strong>
+                <p>{{ product.description }}</p>
+                 @if (product.featured) {
+                  <span class="featured-tag">Featured</span>
+                }               
+              </div>
+            </div>
+
+            <span>{{ product.category }}</span>
+            <span>{{ product.price }} ₾</span>
+            <span [class.out-stock]="product.stock <= 0">
+              {{ product.stock }}
+            </span>
+            <!-- <span>
+              {{ product.active ? 'აქტიური' : 'არააქტიური' }}
+            </span> -->
+            <div class="action-buttons">
+              <button class="edit-btn" type="button" (click)="openEditProductModal(product)">
+                რედაქტირება
+              </button>
+
+              <button class="delete-btn" type="button" (click)="deleteProduct(product)">
+                წაშლა
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+@if (isProductModalOpen) {
+  <app-product-modal
+    [mode]="modalMode"
+    [product]="selectedProduct"
+    (close)="closeProductModal()"
+    (productSaved)="onProductSaved()"
+  ></app-product-modal>
+}

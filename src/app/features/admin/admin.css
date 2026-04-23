@@ -23,19 +23,6 @@
   padding: 24px 28px;
 }
 
-.content-placeholder {
-  min-height: 300px;
-  border: 2px dashed #cbd5e1;
-  border-radius: 20px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 18px;
-  font-weight: 500;
-}
-
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 1fr;
