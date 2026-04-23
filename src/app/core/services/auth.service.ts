@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -14,8 +14,21 @@ import { notificationService } from './notification.service';
   providedIn: 'root',
 })
 export class AuthService {
+  isAuthReady() {
+    throw new Error('Method not implemented.');
+  }
   private firebaseAuth = inject(Auth);
   private notify = inject(notificationService);
+
+  user = signal<User | null>(null);
+  isReady = signal(false);
+
+  constructor() {
+    onAuthStateChanged(this.firebaseAuth, (user) => {
+      this.user.set(user);
+      this.isReady.set(true);
+    });
+  }
 
   register(email: string, password: string) {
     return createUserWithEmailAndPassword(this.firebaseAuth, email, password);
@@ -40,16 +53,18 @@ export class AuthService {
     }
   }
 
+  async waitUntilReady(): Promise<void> {
+    while (!this.isReady()) {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+  }
+
   logout() {
     return signOut(this.firebaseAuth);
   }
 
   isLoggedIn(): boolean {
-    return !!this.firebaseAuth.currentUser;
-  }
-
-  watchAuthState(callback: (user: User | null) => void) {
-    return onAuthStateChanged(this.firebaseAuth, callback);
+    return !!this.user();
   }
 
   forgotPassword(email: string) {
