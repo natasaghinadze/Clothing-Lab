@@ -1,0 +1,115 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3>
+          {{ mode() === 'edit' ? 'პროდუქტის რედაქტირება' : 'პროდუქტის დამატება' }}
+        </h3>
+        <p>
+          {{
+            mode() === 'edit'
+              ? 'შეცვალე პროდუქტის ინფორმაცია'
+              : 'შეავსე პროდუქტის ინფორმაცია და ატვირთე ფოტო'
+          }}
+        </p>
+      </div>
+
+      <button type="button" class="icon-btn" (click)="close.emit()">✕</button>
+    </div>
+
+    <form [formGroup]="productForm" (ngSubmit)="submit()" class="modal-form">
+      <div class="form-group">
+        <label for="name">პროდუქტის სახელი</label>
+        <input id="name" type="text" formControlName="name" placeholder="მაგ. Nike Air Max" />
+        @if (productForm.get('name')?.touched && productForm.get('name')?.invalid) {
+          <small>სახელი სავალდებულოა</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">აღწერა</label>
+        <textarea
+          id="description"
+          rows="4"
+          formControlName="description"
+          placeholder="პროდუქტის აღწერა"
+        ></textarea>
+        @if (productForm.get('description')?.touched && productForm.get('description')?.invalid) {
+          <small>აღწერა უნდა იყოს მინიმუმ 10 სიმბოლო</small>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="price">ფასი</label>
+          <input id="price" type="number" formControlName="price" placeholder="299" />
+          @if (productForm.get('price')?.touched && productForm.get('price')?.invalid) {
+            <small>ფასი უნდა იყოს 1-ზე მეტი</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="stock">მარაგი</label>
+          <input id="stock" type="number" formControlName="stock" placeholder="10" />
+          @if (productForm.get('stock')?.touched && productForm.get('stock')?.invalid) {
+            <small>მარაგი არ შეიძლება იყოს უარყოფითი</small>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">კატეგორია</label>
+        <input id="category" type="text" formControlName="category" placeholder="მაგ. shoes" />
+        @if (productForm.get('category')?.touched && productForm.get('category')?.invalid) {
+          <small>კატეგორია სავალდებულოა</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="image">პროდუქტის ფოტო</label>
+        <input id="image" type="file" accept="image/*" (change)="onFileSelected($event)" />
+        @if (selectedFileName()) {
+          <p class="file-name">{{ selectedFileName() }}</p>
+        }
+      </div>
+
+      @if (imagePreview()) {
+        <div class="preview-box">
+          <img [src]="imagePreview()" alt="Preview" />
+        </div>
+      }
+
+      <div class="check-row">
+        <label class="check-item">
+          <input type="checkbox" formControlName="active" />
+          <span>აქტიური</span>
+        </label>
+
+        <label class="check-item">
+          <input type="checkbox" formControlName="featured" />
+          <span>გამორჩეული</span>
+        </label>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="form-error">{{ errorMessage() }}</p>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" (click)="close.emit()">
+          გაუქმება
+        </button>
+
+        <button type="submit" class="primary-btn" [disabled]="loading()">
+          {{
+            loading()
+              ? 'ინახება...'
+              : mode() === 'edit'
+              ? 'შენახვა'
+              : 'დამატება'
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
