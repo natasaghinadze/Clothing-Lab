@@ -1,0 +1,162 @@
+<section class="dashboard-page">
+  <div class="dashboard-top">
+    <div>
+      <h2>მთავარი პანელი</h2>
+      <p>მაღაზიის მოკლე მიმოხილვა და საყურადღებო სტატუსები</p>
+    </div>
+
+    <a routerLink="/admin/products" class="primary-btn">
+      პროდუქტების მართვა
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="state-box">იტვირთება...</div>
+  } @else if (errorMessage()) {
+    <div class="state-box error">{{ errorMessage() }}</div>
+  } @else {
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span>სულ პროდუქტები</span>
+        <strong>{{ totalProducts() }}</strong>
+      </div>
+
+      <div class="kpi-card">
+        <span>აქტიური</span>
+        <strong>{{ activeProducts() }}</strong>
+      </div>
+
+      <div class="kpi-card danger">
+        <span>მარაგის გარეშე</span>
+        <strong>{{ outOfStockProducts() }}</strong>
+      </div>
+
+      <div class="kpi-card">
+        <span>ინვენტარის ჯამური ღირებულება</span>
+        <strong>{{ estimatedInventoryValue() }} ₾</strong>
+      </div>
+    </div>
+
+    <div class="dashboard-layout">
+      <div class="main-card">
+        <div class="section-header">
+          <div>
+            <h3>პროდუქტების მიმოხილვა</h3>
+            <p>ბოლო დამატებული პროდუქტები კატალოგში</p>
+          </div>
+
+          <a routerLink="/admin/products">ყველას ნახვა</a>
+        </div>
+
+        @if (recentProducts().length === 0) {
+          <div class="empty-box">პროდუქტები ჯერ არ არის დამატებული</div>
+        } @else {
+          <div class="products-table">
+            <div class="table-head">
+              <span>პროდუქტი</span>
+              <span>კატეგორია</span>
+              <span>ფასი</span>
+              <span>მარაგი</span>
+              <span>სტატუსი</span>
+            </div>
+
+            @for (product of recentProducts(); track product.id) {
+              <div class="table-row">
+                <div class="product-cell">
+                  <img
+                    [src]="product.imageUrl || 'https://via.placeholder.com/80x80?text=No+Image'"
+                    [alt]="product.name"
+                  />
+
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <p>{{ product.description }}</p>
+                  </div>
+                </div>
+
+                <span>{{ product.category }}</span>
+                <span>{{ product.price }} ₾</span>
+
+                <span [class.out-stock]="product.stock <= 0">
+                  {{ product.stock }}
+                </span>
+
+                <span
+                  class="status"
+                  [class.status-active]="product.active && product.stock > 0"
+                  [class.status-out]="product.stock <= 0"
+                  [class.status-inactive]="!product.active"
+                >
+                  {{
+                    product.stock <= 0
+                      ? 'მარაგის გარეშე'
+                      : product.active
+                      ? 'აქტიური'
+                      : 'არააქტიური'
+                  }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <aside class="side-panel">
+        <div class="side-card">
+          <h3>საყურადღებო</h3>
+
+          @if (outOfStockList().length === 0 && lowStockProducts().length === 0) {
+            <p class="muted">ამ ეტაპზე საყურადღებო პროდუქტი არ არის.</p>
+          } @else {
+            <div class="alert-list">
+              @for (product of outOfStockList(); track product.id) {
+                <div class="alert-item">
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <span>მარაგის გარეშე</span>
+                  </div>
+                </div>
+              }
+
+              @for (product of lowStockProducts(); track product.id) {
+                <div class="alert-item warning">
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <span>დაბალი მარაგი: {{ product.stock }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="side-card">
+          <h3>სწრაფი მოქმედებები</h3>
+
+          <div class="quick-links">
+            <a routerLink="/admin/products">შეკვეთები</a>
+            <a routerLink="/admin/products">შეკვეთების სტატუსი</a>
+            <a routerLink="/admin/orders">გაუქმებული/დაგვიანებული შეკვეთები</a>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <h3>კატეგორიები</h3>
+
+          @if (categories().length === 0) {
+            <p class="muted">კატეგორიები ჯერ არ არის.</p>
+          } @else {
+            <div class="category-list">
+              @for (category of categories(); track category.name) {
+                <div class="category-item">
+                  <span>{{ category.name }}</span>
+                  <strong>{{ category.count }}</strong>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </aside>
+    </div>
+  }
+</section>
